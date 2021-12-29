@@ -29,11 +29,17 @@ RSpec.describe EagerGroup, type: :model do
         expect(posts[2].comments_average_rating).to eq 0
       end
 
-      it 'gets Post#comments_average_rating_by_author' do
-        students = Student.all
-        posts = Post.eager_group([:comments_average_rating_by_author, students[0], true])
-        expect(posts[0].comments_average_rating_by_author).to eq 4.5
-        expect(posts[1].comments_average_rating_by_author).to eq 3
+      # it 'gets Post#comments_average_rating_by_author' do
+      #   students = Student.all
+      #   posts = Post.eager_group([:comments_average_rating_by_author, students[0], true])
+      #   expect(posts[0].comments_average_rating_by_author).to eq 4.5
+      #   expect(posts[1].comments_average_rating_by_author).to eq 3
+      # end
+
+      it 'gets Post#comments_rating_sum' do
+        posts = Post.eager_group(:comments_rating_sum)
+        expect(posts[0].comments_rating_sum).to eq posts[0].comments.collect(&:rating).sum
+        expect(posts[1].comments_rating_sum).to eq posts[1].comments.collect(&:rating).sum
       end
 
       it 'gets Post#comments_average_rating from users' do
@@ -108,16 +114,16 @@ RSpec.describe EagerGroup, type: :model do
         expect(object_id1).to eq object_id3
       end
 
-      it 'eager_group result cached if arguments given' do
-        students = Student.all
-        posts = Post.eager_group([:comments_average_rating_by_author, students[0], true])
-        post = posts[0]
-        object_id1 = post.instance_variable_get('@comments_average_rating_by_author').object_id
-        object_id2 = post.comments_average_rating_by_author.object_id
-        object_id3 = post.comments_average_rating_by_author.object_id
-        expect(object_id1).to eq object_id2
-        expect(object_id1).to eq object_id3
-      end
+      # it 'eager_group result cached if arguments given' do
+      #   students = Student.all
+      #   posts = Post.eager_group([:comments_average_rating_by_author, students[0], true])
+      #   post = posts[0]
+      #   object_id1 = post.instance_variable_get('@comments_average_rating_by_author').object_id
+      #   object_id2 = post.comments_average_rating_by_author.object_id
+      #   object_id3 = post.comments_average_rating_by_author.object_id
+      #   expect(object_id1).to eq object_id2
+      #   expect(object_id1).to eq object_id3
+      # end
 
       it 'magic method result cached' do
         post = Post.first
@@ -126,13 +132,13 @@ RSpec.describe EagerGroup, type: :model do
         expect(object_id1).to eq object_id2
       end
 
-      it 'magic method not cache if arguments given' do
-        students = Student.all
-        posts = Post.all
-        object_id1 = posts[0].comments_average_rating_by_author(students[0], true).object_id
-        object_id2 = posts[0].comments_average_rating_by_author(students[0], true).object_id
-        expect(object_id1).not_to eq object_id2
-      end
+      # it 'magic method not cache if arguments given' do
+      #   students = Student.all
+      #   posts = Post.all
+      #   object_id1 = posts[0].comments_average_rating_by_author(students[0], true).object_id
+      #   object_id2 = posts[0].comments_average_rating_by_author(students[0], true).object_id
+      #   expect(object_id1).not_to eq object_id2
+      # end
     end
 
     context 'has_many' do
@@ -157,12 +163,12 @@ RSpec.describe EagerGroup, type: :model do
         expect(posts[2].approved_comments_count).to eq 0
       end
 
-      it 'gets Post#comments_average_rating_by_author' do
-        students = Student.all
-        posts = Post.all
-        expect(posts[0].comments_average_rating_by_author(students[0], true)).to eq 4.5
-        expect(posts[1].comments_average_rating_by_author(students[0], true)).to eq 3
-      end
+      # it 'gets Post#comments_average_rating_by_author' do
+      #   students = Student.all
+      #   posts = Post.all
+      #   expect(posts[0].comments_average_rating_by_author(students[0], true)).to eq 4.5
+      #   expect(posts[1].comments_average_rating_by_author(students[0], true)).to eq 3
+      # end
     end
 
     context 'has_and_belongs_to_many' do

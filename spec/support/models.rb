@@ -13,11 +13,15 @@ class Post < ActiveRecord::Base
 
   define_eager_group :comments_average_rating, :comments, :average, :rating
   define_eager_group :approved_comments_count, :comments, :count, :*, -> { approved }
-  define_eager_group :comments_average_rating_by_author,
+  # define_eager_group :comments_average_rating_by_author,
+  #                    :comments,
+  #                    :average,
+  #                    :rating,
+  #                    ->(author, ignore) { by_author(author, ignore) }
+  define_eager_group :comments_rating_sum,
                      :comments,
-                     :average,
-                     :rating,
-                     ->(author, ignore) { by_author(author, ignore) }
+                     :sum,
+                     :rating
   define_eager_group :first_comment, :comments, :first_object, :id
   define_eager_group :last_comment, :comments, :last_object, :id
 end
